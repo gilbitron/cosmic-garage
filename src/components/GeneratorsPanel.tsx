@@ -11,14 +11,16 @@ interface GeneratorCardProps {
   multipliers: Record<string, number>;
   reputation: number;
   prestigeLevels: Record<string, number>;
+  upgrades: import('../types/gameTypes').Upgrade[];
+  generators: Generator[];
   canAfford: boolean;
   onPurchase: () => void;
 }
 
 const GeneratorCard = ({
-  generator, multipliers, reputation, prestigeLevels, canAfford, onPurchase,
+  generator, multipliers, reputation, prestigeLevels, upgrades, generators, canAfford, onPurchase,
 }: GeneratorCardProps) => {
-  const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation, prestigeLevels);
+  const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation, prestigeLevels, upgrades, generators);
   const res = RESOURCE_META[generator.resourceType];
   const effectiveCost = getEffectiveCost(generator.cost, prestigeLevels);
 
@@ -80,7 +82,7 @@ const TIER_LABELS: Record<number, { title: string; color: string }> = {
 // ── Panel ──────────────────────────────────────────────────────────────
 
 export const GeneratorsPanel = () => {
-  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers, reputation, prestigeLevels } =
+  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers, reputation, prestigeLevels, upgrades } =
     useGameStore((state) => ({
       generators: state.generators,
       resources: state.resources,
@@ -89,6 +91,7 @@ export const GeneratorsPanel = () => {
       unlockedTiers: state.unlockedTiers,
       reputation: state.resources.reputation,
       prestigeLevels: state.prestigeUpgradeLevels,
+      upgrades: state.upgrades,
     }));
 
   const canAffordCost = (cost: Cost): boolean => {
@@ -124,6 +127,8 @@ export const GeneratorsPanel = () => {
                       multipliers={productionMultipliers}
                       reputation={reputation}
                       prestigeLevels={prestigeLevels}
+                      upgrades={upgrades}
+                      generators={generators}
                       canAfford={canAffordCost(generator.cost)}
                       onPurchase={() => purchaseGenerator(generator.id)}
                     />

@@ -39,9 +39,10 @@ export interface Upgrade {
 }
 
 export interface UpgradeEffect {
-  type: 'multiplier' | 'unlock' | 'synergy';
+  type: 'multiplier' | 'unlock' | 'synergy' | 'dynamic';
   target?: string;
   multiplier?: number;
+  dynamicId?: string;
 }
 
 export interface PrestigeUpgradeDef {

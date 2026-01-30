@@ -33,6 +33,8 @@ const initialUpgrades: Upgrade[] = [
   { id: 'research-grants', name: 'Research Grants', description: '+40% research production', owned: false, cost: { credits: 300 }, effect: { type: 'multiplier', target: 'research', multiplier: 1.4 } },
   { id: 'powered-crushers', name: 'Powered Crushers', description: 'Energy-boosted crushers produce 2× scrap', owned: false, cost: { energy: 150 }, effect: { type: 'synergy', target: 'scrap', multiplier: 2 } },
   { id: 'automated-repairs', name: 'Automated Repairs', description: 'Scrap-fed auto-tools produce 3× credits', owned: false, cost: { scrap: 200 }, effect: { type: 'synergy', target: 'credits', multiplier: 3 } },
+  { id: 'scientific-method', name: 'Scientific Method', description: 'Research +1% per Scientist owned', owned: false, cost: { research: 100, credits: 200 }, effect: { type: 'dynamic', dynamicId: 'scientific-method' } },
+  { id: 'self-improvement', name: 'Self-Improvement', description: 'All production +1% per upgrade purchased', owned: false, cost: { credits: 400, scrap: 200, energy: 100 }, effect: { type: 'dynamic', dynamicId: 'self-improvement' } },
   { id: 'expanded-garage', name: 'Expanded Garage', description: 'Unlock Tier 2 generators', owned: false, cost: { credits: 500, scrap: 200 }, effect: { type: 'unlock', target: 'tier2' } },
   { id: 'orbital-platform', name: 'Orbital Platform', description: 'Unlock Tier 3 generators', owned: false, cost: { credits: 2000, scrap: 1000, energy: 500, research: 200 }, effect: { type: 'unlock', target: 'tier3' } },
 ];
@@ -111,18 +113,45 @@ export const getEffectiveCost = (cost: Cost, levels: Record<string, number>): Co
   return effective;
 };
 
+/** Dynamic synergy multiplier based on current game state. */
+export const getDynamicMult = (
+  resourceType: string,
+  upgrades: Upgrade[],
+  generators: Generator[]
+): number => {
+  let mult = 1;
+  const owned = (id: string) => upgrades.find((u) => u.id === id)?.owned;
+
+  // Scientific Method: research +1% per Scientist owned
+  if (resourceType === 'research' && owned('scientific-method')) {
+    const scientists = generators.find((g) => g.id === 'scientist')?.owned || 0;
+    mult *= 1 + scientists * 0.01;
+  }
+
+  // Self-Improvement: all production +1% per upgrade purchased
+  if (owned('self-improvement')) {
+    const purchasedCount = upgrades.filter((u) => u.owned).length;
+    mult *= 1 + purchasedCount * 0.01;
+  }
+
+  return mult;
+};
+
 /** Full production calc for a single generator. */
 export const getGeneratorProduction = (
   generator: Generator,
   multipliers: Record<string, number>,
   reputation = 0,
-  prestigeLevels: Record<string, number> = {}
+  prestigeLevels: Record<string, number> = {},
+  upgrades: Upgrade[] = [],
+  generators: Generator[] = []
 ): { perUnit: number; total: number } => {
   const genMult = multipliers[generator.id] || 1;
   const resMult = multipliers[generator.resourceType] || 1;
   const repMult = getReputationBonus(reputation);
   const presMult = getPrestigeProductionMult(generator.resourceType, prestigeLevels);
-  const perUnit = generator.baseProduction * genMult * resMult * repMult * presMult;
+  const dynMult = getDynamicMult(generator.resourceType, upgrades, generators);
+  const perUnit = generator.baseProduction * genMult * resMult * repMult * presMult * dynMult;
   return { perUnit, total: perUnit * generator.owned };
 };
 
@@ -158,7 +187,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (generator.owned > 0) {
         const { total } = getGeneratorProduction(
           generator, state.productionMultipliers,
-          state.resources.reputation, state.prestigeUpgradeLevels
+          state.resources.reputation, state.prestigeUpgradeLevels,
+          state.upgrades, state.generators
         );
         const produced = total * deltaTime;
         newResources[generator.resourceType] += produced;
@@ -327,7 +357,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         let offlineCredits = 0;
         state.generators.forEach((g: Generator) => {
           if (g.owned > 0) {
-            const { total } = getGeneratorProduction(g, state.productionMultipliers, state.resources.reputation, state.prestigeUpgradeLevels || {});
+            const { total } = getGeneratorProduction(g, state.productionMultipliers, state.resources.reputation, state.prestigeUpgradeLevels || {}, state.upgrades, state.generators);
             const produced = total * offlineSecs;
             newResources[g.resourceType] += produced;
             if (g.resourceType === 'credits') offlineCredits += produced;

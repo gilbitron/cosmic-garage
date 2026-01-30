@@ -2,7 +2,7 @@ import { useGameStore, getGeneratorProduction } from '../store/gameStore';
 import { formatNumber, formatTime, calculateProduction } from '../utils/formatters';
 
 export const StatsPanel = () => {
-  const { generators, productionMultipliers, totalCreditsEarned, timePlayed, prestigeCount, reputation, prestigeLevels } =
+  const { generators, productionMultipliers, totalCreditsEarned, timePlayed, prestigeCount, reputation, prestigeLevels, upgrades } =
     useGameStore((state) => ({
       generators: state.generators,
       productionMultipliers: state.productionMultipliers,
@@ -11,6 +11,7 @@ export const StatsPanel = () => {
       prestigeCount: state.prestigeCount,
       reputation: state.resources.reputation,
       prestigeLevels: state.prestigeUpgradeLevels,
+      upgrades: state.upgrades,
     }));
 
   const totalGenerators = generators.reduce((sum, g) => sum + g.owned, 0);
@@ -20,10 +21,10 @@ export const StatsPanel = () => {
     { label: 'Total Credits Earned', value: `₡${formatNumber(totalCreditsEarned)}` },
     { label: 'Prestige Count', value: String(prestigeCount) },
     { label: 'Total Generators', value: String(totalGenerators) },
-    { label: 'Credits/s', value: formatNumber(calculateProduction(generators, 'credits', productionMultipliers, reputation, prestigeLevels)) },
-    { label: 'Scrap/s', value: formatNumber(calculateProduction(generators, 'scrap', productionMultipliers, reputation, prestigeLevels)) },
-    { label: 'Energy/s', value: formatNumber(calculateProduction(generators, 'energy', productionMultipliers, reputation, prestigeLevels)) },
-    { label: 'Research/s', value: formatNumber(calculateProduction(generators, 'research', productionMultipliers, reputation, prestigeLevels)) },
+    { label: 'Credits/s', value: formatNumber(calculateProduction(generators, 'credits', productionMultipliers, reputation, prestigeLevels, upgrades)) },
+    { label: 'Scrap/s', value: formatNumber(calculateProduction(generators, 'scrap', productionMultipliers, reputation, prestigeLevels, upgrades)) },
+    { label: 'Energy/s', value: formatNumber(calculateProduction(generators, 'energy', productionMultipliers, reputation, prestigeLevels, upgrades)) },
+    { label: 'Research/s', value: formatNumber(calculateProduction(generators, 'research', productionMultipliers, reputation, prestigeLevels, upgrades)) },
   ];
 
   return (
@@ -45,7 +46,7 @@ export const StatsPanel = () => {
           {generators
             .filter((g) => g.owned > 0)
             .map((g) => {
-              const { total } = getGeneratorProduction(g, productionMultipliers, reputation, prestigeLevels);
+              const { total } = getGeneratorProduction(g, productionMultipliers, reputation, prestigeLevels, upgrades, generators);
               return (
                 <div key={g.id} className="flex justify-between text-sm bg-gray-700 rounded px-3 py-2">
                   <span className="text-gray-300">{g.name} ×{g.owned}</span>

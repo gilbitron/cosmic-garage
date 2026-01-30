@@ -1,4 +1,4 @@
-import { Cost, Generator } from '../types/gameTypes';
+import { Cost, Generator, Upgrade } from '../types/gameTypes';
 
 // ── Resource Icons ─────────────────────────────────────────────────────
 
@@ -66,20 +66,32 @@ export function calculateProduction(
   resourceType: string,
   multipliers: Record<string, number>,
   reputation = 0,
-  prestigeLevels: Record<string, number> = {}
+  prestigeLevels: Record<string, number> = {},
+  upgrades: Upgrade[] = []
 ): number {
   const repMult = 1 + reputation * 0.1;
-  // Prestige production bonuses
+
   let presMult = 1;
   presMult *= 1 + (prestigeLevels['quality-tools'] || 0) * 0.05;
   if (resourceType === 'credits') presMult *= 1 + (prestigeLevels['famous-garage'] || 0) * 0.10;
   if (resourceType === 'research') presMult *= 1 + (prestigeLevels['fast-learners'] || 0) * 0.03;
+
+  // Dynamic synergy multipliers
+  let dynMult = 1;
+  const ownsUpgrade = (id: string) => upgrades.find((u) => u.id === id)?.owned;
+  if (resourceType === 'research' && ownsUpgrade('scientific-method')) {
+    const scientists = generators.find((g) => g.id === 'scientist')?.owned || 0;
+    dynMult *= 1 + scientists * 0.01;
+  }
+  if (ownsUpgrade('self-improvement')) {
+    dynMult *= 1 + upgrades.filter((u) => u.owned).length * 0.01;
+  }
 
   return generators
     .filter((g) => g.resourceType === resourceType && g.owned > 0)
     .reduce((total, g) => {
       const genMult = multipliers[g.id] || 1;
       const resMult = multipliers[g.resourceType] || 1;
-      return total + g.owned * g.baseProduction * genMult * resMult * repMult * presMult;
+      return total + g.owned * g.baseProduction * genMult * resMult * repMult * presMult * dynMult;
     }, 0);
 }
