@@ -1,6 +1,7 @@
 import { useGameStore } from '../store/gameStore';
 import { formatCost } from '../utils/formatters';
 import { Cost, Resources } from '../types/gameTypes';
+import { RESOURCE_META } from '../utils/resources';
 
 const EFFECT_BADGES: Record<string, { label: string; color: string }> = {
   multiplier: { label: 'Production', color: 'bg-green-800 text-green-300' },
@@ -34,6 +35,11 @@ export const UpgradesPanel = () => {
           {available.map((upgrade) => {
             const canBuy = canAfford(upgrade.cost);
             const badge = EFFECT_BADGES[upgrade.effect.type];
+            // Show resource badge for multiplier/synergy upgrades
+            const targetRes =
+              upgrade.effect.target && RESOURCE_META[upgrade.effect.target]
+                ? RESOURCE_META[upgrade.effect.target]
+                : null;
 
             return (
               <div
@@ -44,17 +50,20 @@ export const UpgradesPanel = () => {
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold">{upgrade.name}</h3>
                       {badge && (
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full ${badge.color}`}
-                        >
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${badge.color}`}>
                           {badge.label}
                         </span>
                       )}
+                      {targetRes && (
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${targetRes.color} ${targetRes.bgColor}`}>
+                          {targetRes.icon} {targetRes.label}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-400">{upgrade.description}</p>
+                    <p className="text-sm text-gray-400 mt-1">{upgrade.description}</p>
                   </div>
                 </div>
 

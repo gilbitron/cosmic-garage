@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ResourcesBar } from './ResourcesBar';
+import { useState, useRef, useEffect } from 'react';
+import { ResourcesBar, StickyResourcesBar } from './ResourcesBar';
 import { GeneratorsPanel } from './GeneratorsPanel';
 import { UpgradesPanel } from './UpgradesPanel';
 import { PrestigePanel } from './PrestigePanel';
@@ -16,10 +16,25 @@ const TABS: { key: TabKey; label: string; emoji: string }[] = [
 
 export const GameLayout = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('generators');
+  const [showSticky, setShowSticky] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      <ResourcesBar />
+      <ResourcesBar ref={headerRef} />
+      <StickyResourcesBar visible={showSticky} />
 
       {/* Main content */}
       <div className="flex-1 p-4">
