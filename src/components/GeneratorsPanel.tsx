@@ -1,6 +1,7 @@
 import { useGameStore, getGeneratorProduction } from '../store/gameStore';
 import { formatCost, formatProduction } from '../utils/formatters';
 import { Cost, Generator, Resources } from '../types/gameTypes';
+import { ManualRepair } from './ManualRepair';
 
 // ── Generator Card ─────────────────────────────────────────────────────
 
@@ -90,10 +91,13 @@ export const GeneratorsPanel = () => {
   const tiers = [1, 2, 3].filter((t) => unlockedTiers.includes(t));
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4">
-      <h2 className="text-xl font-bold mb-4 text-blue-400">Generators</h2>
+    <div>
+      <ManualRepair />
 
-      <div className="space-y-6">
+      <div className="bg-gray-800 rounded-lg p-4">
+        <h2 className="text-xl font-bold mb-4 text-blue-400">Generators</h2>
+
+        <div className="space-y-6">
         {tiers.map((tier) => {
           const tierGens = generators.filter((g) => g.tier === tier);
           const label = TIER_LABELS[tier];
@@ -116,6 +120,7 @@ export const GeneratorsPanel = () => {
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );

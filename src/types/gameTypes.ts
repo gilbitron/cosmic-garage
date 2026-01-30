@@ -51,6 +51,8 @@ export interface GameState {
   unlockedTiers: number[];
   productionMultipliers: Record<string, number>;
   totalCreditsEarned: number;
+  totalClicks: number;
+  clickValue: number;
   timePlayed: number;
   lastTick: number;
   prestigeCount: number;

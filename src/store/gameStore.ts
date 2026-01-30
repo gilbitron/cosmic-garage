@@ -220,6 +220,8 @@ const initialState: GameState = {
   unlockedTiers: [1],
   productionMultipliers: {},
   totalCreditsEarned: 0,
+  totalClicks: 0,
+  clickValue: 1,
   timePlayed: 0,
   lastTick: Date.now(),
   prestigeCount: 0,
@@ -264,6 +266,7 @@ export const getGeneratorProduction = (
 
 interface GameStore extends GameState {
   tick: () => void;
+  manualRepair: () => void;
   purchaseGenerator: (generatorId: string) => boolean;
   purchaseUpgrade: (upgradeId: string) => boolean;
   prestige: () => boolean;
@@ -300,6 +303,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
       totalCreditsEarned: state.totalCreditsEarned + creditsProduced,
       timePlayed: state.timePlayed + deltaTime,
       lastTick: now,
+    });
+  },
+
+  // ── Manual Repair (click) ───────────────────────────────────────────
+  manualRepair: () => {
+    const state = get();
+    set({
+      resources: {
+        ...state.resources,
+        credits: state.resources.credits + state.clickValue,
+      },
+      totalCreditsEarned: state.totalCreditsEarned + state.clickValue,
+      totalClicks: state.totalClicks + 1,
     });
   },
 
