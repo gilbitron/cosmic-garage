@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { GameLayout } from './components/GameLayout';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ToastProvider, useToast } from './components/Toast';
@@ -63,6 +64,7 @@ function App() {
     <ToastProvider>
       <div className="min-h-screen bg-gray-900 text-white">
         <GameInner />
+        <Analytics />
       </div>
     </ToastProvider>
   );
