@@ -4,6 +4,7 @@ import { formatCost, formatProduction } from '../utils/formatters';
 import { Cost, Generator, Resources } from '../types/gameTypes';
 import { RESOURCE_META } from '../utils/resources';
 import { ManualRepair } from './ManualRepair';
+import { ResourceFlow } from './ResourceFlow';
 
 // ── Generator Card ─────────────────────────────────────────────────────
 
@@ -132,9 +133,17 @@ export const GeneratorsPanel = () => {
             const label = TIER_LABELS[tier];
             return (
               <div key={tier}>
-                <h3 className={`text-lg font-semibold mb-3 ${label.color}`}>
+                <h3 className={`text-lg font-semibold mb-1 ${label.color}`}>
                   {label.title}
                 </h3>
+                <ResourceFlow
+                  tierGens={tierGens}
+                  multipliers={productionMultipliers}
+                  reputation={reputation}
+                  prestigeLevels={prestigeLevels}
+                  upgrades={upgrades}
+                  allGenerators={generators}
+                />
                 <div className="space-y-3">
                   {tierGens.map((generator) => (
                     <GeneratorCard
