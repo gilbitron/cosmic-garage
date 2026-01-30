@@ -1,5 +1,6 @@
 import { useGameStore } from '../store/gameStore';
 import { formatCost } from '../utils/formatters';
+import { Cost, Resources } from '../types/gameTypes';
 
 export const UpgradesPanel = () => {
   const { upgrades, resources, purchaseUpgrade } = useGameStore(state => ({
@@ -8,10 +9,10 @@ export const UpgradesPanel = () => {
     purchaseUpgrade: state.purchaseUpgrade
   }));
 
-  const canAfford = (cost: any): boolean => {
-    return Object.entries(cost).every(([key, value]) => {
+  const canAfford = (cost: Cost): boolean => {
+    return (Object.entries(cost) as [keyof Resources, number | undefined][]).every(([key, value]) => {
       if (value === undefined || value === 0) return true;
-      return resources[key as keyof typeof resources] >= value;
+      return resources[key] >= value;
     });
   };
 

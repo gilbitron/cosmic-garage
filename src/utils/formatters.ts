@@ -1,3 +1,5 @@
+import { Cost } from '../types/gameTypes';
+
 /**
  * Format numbers for display in the game
  * Uses scientific notation for very large numbers
@@ -47,7 +49,7 @@ export function formatProduction(rate: number): string {
 /**
  * Format costs for display
  */
-export function formatCost(cost: Record<string, number>): string {
+export function formatCost(cost: Cost): string {
   const parts: string[] = [];
   
   Object.entries(cost).forEach(([resource, amount]) => {

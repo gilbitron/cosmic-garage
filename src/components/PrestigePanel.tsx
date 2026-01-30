@@ -2,14 +2,13 @@ import { useGameStore } from '../store/gameStore';
 import { formatNumber } from '../utils/formatters';
 
 export const PrestigePanel = () => {
-  const { resources, totalCreditsEarned, prestigeCount, prestige, getPrestigeGain, loadGame } = useGameStore(
+  const { resources, totalCreditsEarned, prestigeCount, prestige, getPrestigeGain } = useGameStore(
     state => ({
       resources: state.resources,
       totalCreditsEarned: state.totalCreditsEarned,
       prestigeCount: state.prestigeCount,
       prestige: state.prestige,
-      getPrestigeGain: state.getPrestigeGain,
-      loadGame: state.loadGame
+      getPrestigeGain: state.getPrestigeGain
     })
   );
 

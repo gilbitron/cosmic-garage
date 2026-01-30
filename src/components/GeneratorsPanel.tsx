@@ -1,5 +1,6 @@
 import { useGameStore } from '../store/gameStore';
 import { formatNumber, formatCost, formatProduction, calculateProduction } from '../utils/formatters';
+import { Cost, Resources } from '../types/gameTypes';
 
 interface GeneratorCardProps {
   generator: any;
@@ -72,10 +73,11 @@ export const GeneratorsPanel = () => {
   const tier2Generators = generators.filter(g => g.cost.scrap !== undefined && g.cost.scrap > 50);
   // Future: tier3, etc.
 
-  const canAfford = (cost: any): boolean => {
+  const canAfford = (cost: Cost): boolean => {
     return Object.entries(cost).every(([key, value]) => {
-      if (value === undefined) return true;
-      return resources[key as keyof typeof resources] >= value;
+      if (value === undefined || value === null) return true;
+      const resourceValue = resources[key as keyof Resources];
+      return resourceValue >= value;
     });
   };
 

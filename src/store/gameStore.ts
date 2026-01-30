@@ -138,19 +138,19 @@ const initialState: GameState = {
 };
 
 // Helper: Check if we can afford something
-const canAfford = (resources: Resources, cost: Resources): boolean => {
-  return Object.entries(cost).every(([key, value]) => {
+const canAfford = (resources: Resources, cost: Cost): boolean => {
+  return (Object.entries(cost) as [keyof Resources, number | undefined][]).every(([key, value]) => {
     if (value === undefined) return true;
-    return resources[key as keyof Resources] >= value;
+    return resources[key] >= value;
   });
 };
 
 // Helper: Deduct resources
-const deductResources = (resources: Resources, cost: Resources): Resources => {
+const deductResources = (resources: Resources, cost: Cost): Resources => {
   const newResources = { ...resources };
-  Object.entries(cost).forEach(([key, value]) => {
+  (Object.entries(cost) as [keyof Resources, number | undefined][]).forEach(([key, value]) => {
     if (value !== undefined) {
-      newResources[key as keyof Resources] -= value;
+      newResources[key] -= value;
     }
   });
   return newResources;
