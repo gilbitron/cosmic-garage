@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GameLayout } from './components/GameLayout';
+import { LoadingScreen } from './components/LoadingScreen';
 import { ToastProvider, useToast } from './components/Toast';
 import { useGameLoop, useSaveOnUnload } from './hooks/useGameLoop';
 import { useMilestones } from './hooks/useMilestones';
@@ -7,6 +8,8 @@ import { useGameStore } from './store/gameStore';
 import { formatNumber, formatTime } from './utils/formatters';
 
 function GameInner() {
+  const [ready, setReady] = useState(false);
+
   useGameLoop();
   useSaveOnUnload();
   useMilestones();
@@ -19,7 +22,6 @@ function GameInner() {
     if (loaded.current) return;
     loaded.current = true;
 
-    // Capture resources before load to compute offline gains
     const savedRaw = localStorage.getItem('cosmic-garage-save');
     let prevCredits = 0;
     let timestamp = 0;
@@ -48,11 +50,11 @@ function GameInner() {
       }
     }
 
-    if (!success) {
-      console.log('No save found, starting new game');
-    }
+    // Brief loading screen so layout doesn't flash
+    setTimeout(() => setReady(true), 300);
   }, [loadGame, showToast]);
 
+  if (!ready) return <LoadingScreen />;
   return <GameLayout />;
 }
 
