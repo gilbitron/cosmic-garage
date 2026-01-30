@@ -59,20 +59,27 @@ export function formatTime(seconds: number): string {
 
 /**
  * Total production for a resource type across all generators.
- * Applies generator-specific, resource-type, and reputation multipliers.
+ * Applies generator-specific, resource-type, reputation, and prestige multipliers.
  */
 export function calculateProduction(
   generators: Generator[],
   resourceType: string,
   multipliers: Record<string, number>,
-  reputation = 0
+  reputation = 0,
+  prestigeLevels: Record<string, number> = {}
 ): number {
   const repMult = 1 + reputation * 0.1;
+  // Prestige production bonuses
+  let presMult = 1;
+  presMult *= 1 + (prestigeLevels['quality-tools'] || 0) * 0.05;
+  if (resourceType === 'credits') presMult *= 1 + (prestigeLevels['famous-garage'] || 0) * 0.10;
+  if (resourceType === 'research') presMult *= 1 + (prestigeLevels['fast-learners'] || 0) * 0.03;
+
   return generators
     .filter((g) => g.resourceType === resourceType && g.owned > 0)
     .reduce((total, g) => {
       const genMult = multipliers[g.id] || 1;
       const resMult = multipliers[g.resourceType] || 1;
-      return total + g.owned * g.baseProduction * genMult * resMult * repMult;
+      return total + g.owned * g.baseProduction * genMult * resMult * repMult * presMult;
     }, 0);
 }

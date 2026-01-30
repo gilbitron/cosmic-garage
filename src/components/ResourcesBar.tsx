@@ -7,11 +7,12 @@ function useResourceData() {
   const resources = useGameStore((s) => s.resources);
   const generators = useGameStore((s) => s.generators);
   const multipliers = useGameStore((s) => s.productionMultipliers);
+  const prestigeLevels = useGameStore((s) => s.prestigeUpgradeLevels);
   const reputation = resources.reputation;
 
   const production: Record<string, number> = {};
   for (const key of PRODUCIBLE_RESOURCES) {
-    production[key] = calculateProduction(generators, key, multipliers, reputation);
+    production[key] = calculateProduction(generators, key, multipliers, reputation, prestigeLevels);
   }
 
   return { resources, production };

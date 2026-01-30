@@ -1,4 +1,4 @@
-import { useGameStore, getGeneratorProduction } from '../store/gameStore';
+import { useGameStore, getGeneratorProduction, getEffectiveCost } from '../store/gameStore';
 import { formatCost, formatProduction } from '../utils/formatters';
 import { Cost, Generator, Resources } from '../types/gameTypes';
 import { RESOURCE_META } from '../utils/resources';
@@ -10,24 +10,20 @@ interface GeneratorCardProps {
   generator: Generator;
   multipliers: Record<string, number>;
   reputation: number;
+  prestigeLevels: Record<string, number>;
   canAfford: boolean;
   onPurchase: () => void;
 }
 
 const GeneratorCard = ({
-  generator,
-  multipliers,
-  reputation,
-  canAfford,
-  onPurchase,
+  generator, multipliers, reputation, prestigeLevels, canAfford, onPurchase,
 }: GeneratorCardProps) => {
-  const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation);
+  const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation, prestigeLevels);
   const res = RESOURCE_META[generator.resourceType];
+  const effectiveCost = getEffectiveCost(generator.cost, prestigeLevels);
 
   return (
-    <div className={`rounded-lg p-4 transition-colors bg-gray-700 hover:bg-gray-600 border-l-4`}
-      style={{ borderColor: 'transparent' }}
-    >
+    <div className="rounded-lg p-4 transition-colors bg-gray-700 hover:bg-gray-600">
       <div className="flex justify-between items-start mb-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -67,7 +63,7 @@ const GeneratorCard = ({
         }`}
       >
         Buy {generator.name}
-        <div className="text-xs mt-1">{formatCost(generator.cost)}</div>
+        <div className="text-xs mt-1">{formatCost(effectiveCost)}</div>
       </button>
     </div>
   );
@@ -84,7 +80,7 @@ const TIER_LABELS: Record<number, { title: string; color: string }> = {
 // ── Panel ──────────────────────────────────────────────────────────────
 
 export const GeneratorsPanel = () => {
-  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers, reputation } =
+  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers, reputation, prestigeLevels } =
     useGameStore((state) => ({
       generators: state.generators,
       resources: state.resources,
@@ -92,12 +88,15 @@ export const GeneratorsPanel = () => {
       productionMultipliers: state.productionMultipliers,
       unlockedTiers: state.unlockedTiers,
       reputation: state.resources.reputation,
+      prestigeLevels: state.prestigeUpgradeLevels,
     }));
 
-  const canAffordCost = (cost: Cost): boolean =>
-    (Object.entries(cost) as [keyof Resources, number | undefined][]).every(
+  const canAffordCost = (cost: Cost): boolean => {
+    const effective = getEffectiveCost(cost, prestigeLevels);
+    return (Object.entries(effective) as [keyof Resources, number | undefined][]).every(
       ([key, value]) => !value || resources[key] >= value
     );
+  };
 
   const tiers = [1, 2, 3].filter((t) => unlockedTiers.includes(t));
 
@@ -124,6 +123,7 @@ export const GeneratorsPanel = () => {
                       generator={generator}
                       multipliers={productionMultipliers}
                       reputation={reputation}
+                      prestigeLevels={prestigeLevels}
                       canAfford={canAffordCost(generator.cost)}
                       onPurchase={() => purchaseGenerator(generator.id)}
                     />

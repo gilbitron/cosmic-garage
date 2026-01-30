@@ -44,12 +44,22 @@ export interface UpgradeEffect {
   multiplier?: number;
 }
 
+export interface PrestigeUpgradeDef {
+  id: string;
+  name: string;
+  description: string;
+  maxLevel: number;
+  baseCost: number;
+  costScale: number;
+}
+
 export interface GameState {
   resources: Resources;
   generators: Generator[];
   upgrades: Upgrade[];
   unlockedTiers: number[];
   productionMultipliers: Record<string, number>;
+  prestigeUpgradeLevels: Record<string, number>;
   totalCreditsEarned: number;
   totalClicks: number;
   clickValue: number;
