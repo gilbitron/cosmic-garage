@@ -38,7 +38,10 @@ const GeneratorCard = ({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-lg">{generator.name}</h3>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${res.color} ${res.bgColor}`}>
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${res.color} ${res.bgColor}`}
+              title={`Produces ${res.label.toLowerCase()}`}
+            >
               {res.icon} {res.label}
             </span>
           </div>
@@ -116,7 +119,12 @@ export const GeneratorsPanel = () => {
       <ManualRepair />
 
       <div className="bg-gray-800 rounded-lg p-4">
-        <h2 className="text-xl font-bold mb-4 text-blue-400">Generators</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-blue-400">Generators</h2>
+          <span className="text-xs text-gray-500" title="Generators automatically produce resources every second. Each purchase increases the cost by 15%.">
+            ℹ️ Hover for help
+          </span>
+        </div>
 
         <div className="space-y-6">
           {tiers.map((tier) => {

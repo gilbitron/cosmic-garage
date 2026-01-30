@@ -34,7 +34,12 @@ export const UpgradesPanel = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-4">
-      <h2 className="text-xl font-bold mb-4 text-green-400">Upgrades</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-green-400">Upgrades</h2>
+        <span className="text-xs text-gray-500" title="Production upgrades boost resource output. Synergy upgrades multiply specific resources. Unlock upgrades reveal new generator tiers.">
+          ℹ️ Hover for help
+        </span>
+      </div>
 
       {available.length === 0 ? (
         <p className="text-gray-400 text-center py-8">All upgrades purchased! 🎉</p>

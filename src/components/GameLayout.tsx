@@ -69,8 +69,9 @@ export const GameLayout = () => {
 
       {/* Footer */}
       <div className="bg-gray-800 border-t border-gray-700 p-2">
-        <div className="max-w-3xl mx-auto text-center text-xs text-gray-500">
-          Auto-saves every 30 seconds • Cosmic Garage v1.0
+        <div className="max-w-3xl mx-auto text-center text-xs text-gray-500 space-y-1">
+          <div>Auto-saves every 30 seconds • Cosmic Garage v1.0</div>
+          <div>Tip: Buy generators to automate • Upgrades multiply output • Prestige for permanent bonuses</div>
         </div>
       </div>
     </div>

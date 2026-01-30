@@ -33,7 +33,7 @@ export const ManualRepair = () => {
       <div className="text-xs text-gray-500 text-center mt-2">
         {totalClicks > 0
           ? `${formatNumber(totalClicks)} repairs completed`
-          : 'Click to earn credits and get started!'}
+          : 'Click to earn credits — then buy generators to automate!'}
       </div>
     </div>
   );
