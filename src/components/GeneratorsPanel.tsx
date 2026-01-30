@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import { useGameStore, getGeneratorProduction, getEffectiveCost } from '../store/gameStore';
 import { formatCost, formatProduction } from '../utils/formatters';
 import { Cost, Generator, Resources } from '../types/gameTypes';
@@ -23,9 +24,16 @@ const GeneratorCard = ({
   const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation, prestigeLevels, upgrades, generators);
   const res = RESOURCE_META[generator.resourceType];
   const effectiveCost = getEffectiveCost(generator.cost, prestigeLevels);
+  const [flash, setFlash] = useState(false);
+
+  const handlePurchase = useCallback(() => {
+    onPurchase();
+    setFlash(true);
+    setTimeout(() => setFlash(false), 350);
+  }, [onPurchase]);
 
   return (
-    <div className="rounded-lg p-4 transition-colors bg-gray-700 hover:bg-gray-600">
+    <div className={`rounded-lg p-4 transition-colors bg-gray-700 hover:bg-gray-600 ${flash ? 'animate-purchase' : ''}`}>
       <div className="flex justify-between items-start mb-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -56,9 +64,9 @@ const GeneratorCard = ({
       </div>
 
       <button
-        onClick={onPurchase}
+        onClick={handlePurchase}
         disabled={!canAfford}
-        className={`w-full py-2 px-4 rounded font-medium transition-colors ${
+        className={`w-full py-2 px-4 rounded font-medium transition-all active:scale-95 ${
           canAfford
             ? 'bg-blue-600 hover:bg-blue-700 text-white'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'

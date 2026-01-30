@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { formatCost } from '../utils/formatters';
 import { Cost, Resources } from '../types/gameTypes';
@@ -15,6 +16,13 @@ export const UpgradesPanel = () => {
     resources: state.resources,
     purchaseUpgrade: state.purchaseUpgrade,
   }));
+
+  const [flashId, setFlashId] = useState<string | null>(null);
+  const handlePurchase = useCallback((id: string) => {
+    purchaseUpgrade(id);
+    setFlashId(id);
+    setTimeout(() => setFlashId(null), 350);
+  }, [purchaseUpgrade]);
 
   const canAfford = (cost: Cost): boolean =>
     (Object.entries(cost) as [keyof Resources, number | undefined][]).every(
@@ -46,7 +54,7 @@ export const UpgradesPanel = () => {
                 key={upgrade.id}
                 className={`bg-gray-700 rounded-lg p-4 transition-colors ${
                   canBuy ? 'hover:bg-gray-600' : 'opacity-50'
-                }`}
+                } ${flashId === upgrade.id ? 'animate-purchase' : ''}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -68,9 +76,9 @@ export const UpgradesPanel = () => {
                 </div>
 
                 <button
-                  onClick={() => purchaseUpgrade(upgrade.id)}
+                  onClick={() => handlePurchase(upgrade.id)}
                   disabled={!canBuy}
-                  className={`w-full py-2 px-4 rounded font-medium transition-colors ${
+                  className={`w-full py-2 px-4 rounded font-medium transition-all active:scale-95 ${
                     canBuy
                       ? 'bg-green-600 hover:bg-green-700 text-white'
                       : 'bg-gray-600 text-gray-400 cursor-not-allowed'

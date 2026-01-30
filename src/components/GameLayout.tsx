@@ -59,7 +59,7 @@ export const GameLayout = () => {
         </div>
 
         {/* Tab content */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto tab-content" key={activeTab}>
           {activeTab === 'generators' && <GeneratorsPanel />}
           {activeTab === 'upgrades' && <UpgradesPanel />}
           {activeTab === 'prestige' && <PrestigePanel />}
