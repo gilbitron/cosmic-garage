@@ -1,78 +1,76 @@
-import { Cost } from '../types/gameTypes';
+import { Cost, Generator } from '../types/gameTypes';
 
-/**
- * Format numbers for display in the game
- * Uses scientific notation for very large numbers
- */
+// ── Resource Icons ─────────────────────────────────────────────────────
+
+const RESOURCE_ICON: Record<string, string> = {
+  credits: '₡',
+  scrap: '♻',
+  energy: '⚡',
+  research: '🔬',
+  reputation: '★',
+};
+
+export function resourceIcon(key: string): string {
+  return RESOURCE_ICON[key] ?? '';
+}
+
+// ── Number Formatting ──────────────────────────────────────────────────
+
 export function formatNumber(num: number): string {
   if (num === 0) return '0';
-  
-  const absNum = Math.abs(num);
-  
-  // For numbers less than 1000, show with appropriate decimal places
-  if (absNum < 1000) {
-    return num.toFixed(1).replace(/\.0$/, '');
-  }
-  
-  // For numbers between 1000 and 1 million
-  if (absNum < 1_000_000) {
-    return (num / 1000).toFixed(2) + 'K';
-  }
-  
-  // For numbers between 1 million and 1 billion
-  if (absNum < 1_000_000_000) {
-    return (num / 1_000_000).toFixed(2) + 'M';
-  }
-  
-  // For numbers between 1 billion and 1 trillion
-  if (absNum < 1_000_000_000_000) {
-    return (num / 1_000_000_000).toFixed(2) + 'B';
-  }
-  
-  // For numbers between 1 trillion and 1 quadrillion
-  if (absNum < 1_000_000_000_000_000) {
+
+  const abs = Math.abs(num);
+
+  if (abs < 1000) return num.toFixed(1).replace(/\.0$/, '');
+  if (abs < 1_000_000) return (num / 1_000).toFixed(2) + 'K';
+  if (abs < 1_000_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+  if (abs < 1_000_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B';
+  if (abs < 1_000_000_000_000_000)
     return (num / 1_000_000_000_000).toFixed(2) + 'T';
-  }
-  
-  // For very large numbers, use scientific notation
+
   return num.toExponential(2);
 }
 
-/**
- * Format production rates (per second)
- */
 export function formatProduction(rate: number): string {
-  if (rate === 0) return '0/sec';
-  return `${formatNumber(rate)}/sec`;
+  if (rate === 0) return '0/s';
+  return `${formatNumber(rate)}/s`;
 }
 
-/**
- * Format costs for display
- */
 export function formatCost(cost: Cost): string {
-  const parts: string[] = [];
-  
-  Object.entries(cost).forEach(([resource, amount]) => {
-    if (amount && amount > 0) {
-      parts.push(`${formatNumber(amount)} ${resource}`);
-    }
-  });
-  
-  return parts.join(' + ');
+  return (Object.entries(cost) as [string, number | undefined][])
+    .filter(([, v]) => v && v > 0)
+    .map(([res, amount]) => `${resourceIcon(res)}${formatNumber(amount!)}`)
+    .join(' + ');
 }
 
+// ── Time Formatting ────────────────────────────────────────────────────
+
+export function formatTime(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+// ── Production Calculation ─────────────────────────────────────────────
+
 /**
- * Calculate total production for a specific resource type
+ * Total production for a resource type across all generators.
+ * Applies both generator-specific and resource-type multipliers.
  */
 export function calculateProduction(
-  generators: any[], 
-  resourceType: string, 
+  generators: Generator[],
+  resourceType: string,
   multipliers: Record<string, number>
 ): number {
   return generators
-    .filter(g => g.resourceType === resourceType && g.owned > 0)
+    .filter((g) => g.resourceType === resourceType && g.owned > 0)
     .reduce((total, g) => {
-      const multiplier = multipliers[g.id] || 1;
-      return total + (g.owned * g.baseProduction * multiplier);
+      const genMult = multipliers[g.id] || 1;
+      const resMult = multipliers[g.resourceType] || 1;
+      return total + g.owned * g.baseProduction * genMult * resMult;
     }, 0);
 }

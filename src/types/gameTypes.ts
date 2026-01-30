@@ -8,11 +8,14 @@ export interface Resources {
   reputation: number;
 }
 
+export type ResourceKey = keyof Resources;
+
 export interface Generator {
   id: string;
   name: string;
   description: string;
-  resourceType: keyof Resources;
+  tier: number;
+  resourceType: ResourceKey;
   baseProduction: number;
   owned: number;
   cost: Cost;
@@ -39,13 +42,13 @@ export interface UpgradeEffect {
   type: 'multiplier' | 'unlock' | 'synergy';
   target?: string;
   multiplier?: number;
-  condition?: string;
 }
 
 export interface GameState {
   resources: Resources;
   generators: Generator[];
   upgrades: Upgrade[];
+  unlockedTiers: number[];
   productionMultipliers: Record<string, number>;
   totalCreditsEarned: number;
   timePlayed: number;
