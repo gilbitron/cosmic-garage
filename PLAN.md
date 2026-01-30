@@ -32,8 +32,8 @@ Intergalactic vehicle repair shop idle game. Start fixing lunar rovers, build up
 ## Upgrade System
 
 ### Production Upgrades (always active)
-- **Better Tools** - +25% mechanic production, costs 100 credits
-- **Compressed Storage** - +50% scrap capacity, costs 150 scrap
+- **Better Tools** - +25% credit production, costs 100 credits
+- **Compressed Storage** - +50% scrap production, costs 150 scrap
 - **Efficient Cells** - +30% energy production, costs 200 energy
 - **Research Grants** - +40% research production, costs 300 credits
 
@@ -92,34 +92,34 @@ cosmic-garage/
 ## Implementation Phases
 
 ### Phase 1: MVP (Core Loop)
-- [ ] Set up React + TypeScript + Tailwind + Zustand
-- [ ] Create game store with resources and generators
-- [ ] Implement game tick loop (60fps)
-- [ ] Build ResourcesBar component
-- [ ] Build GeneratorsPanel with purchase functionality
-- [ ] Implement localStorage save/load
-- [ ] Calculate and display production rates
+- [x] Set up React + TypeScript + Tailwind + Zustand
+- [x] Create game store with resources and generators
+- [x] Implement game tick loop (60fps)
+- [x] Build ResourcesBar component
+- [x] Build GeneratorsPanel with purchase functionality
+- [x] Implement localStorage save/load
+- [x] Calculate and display production rates
 
 ### Phase 2: Progression
-- [ ] Add upgrade system with 10-15 upgrades
-- [ ] Balance costs and production rates
-- [ ] Implement upgrade purchase logic
+- [x] Add upgrade system with 10-15 upgrades
+- [x] Balance costs and production rates
+- [x] Implement upgrade purchase logic
 - [ ] Add visual feedback for purchases
-- [ ] Show production breakdowns per generator
+- [x] Show production breakdowns per generator
 - [ ] Add notification system for milestones
 
 ### Phase 3: Prestige & Polish
-- [ ] Implement prestige system with reputation currency
+- [x] Implement prestige system with reputation currency
 - [ ] Add permanent upgrades (5-6 options)
-- [ ] Create PrestigePanel component
-- [ ] Add prestige unlock requirements
-- [ ] Balance prestige formula
-- [ ] Add stats tracking (time played, total earned, etc.)
-- [ ] Create StatsPanel component
+- [x] Create PrestigePanel component
+- [x] Add prestige unlock requirements
+- [x] Balance prestige formula
+- [x] Add stats tracking (time played, total earned, etc.)
+- [x] Create StatsPanel component
 
 ### Phase 4: Mobile & UX
-- [ ] Optimize layout for mobile screens
-- [ ] Add touch-friendly buttons
+- [x] Optimize layout for mobile screens
+- [x] Add touch-friendly buttons
 - [ ] Implement swipe/tap interactions
 - [ ] Test on actual mobile devices
 - [ ] Add loading states and transitions
@@ -167,3 +167,8 @@ cosmic-garage/
 - [ ] No memory leaks in game loop
 - [ ] Numbers format correctly at large values
 - [ ] Game is balanced and fun!
+
+## Not Yet Implemented
+- **Dynamic synergy upgrades**: Scientific Method (1% per Scientist) and Self-Improvement (1% per upgrade) — require dynamic multiplier calculation in game loop
+- **Permanent prestige upgrades**: Famous Garage, Efficient Processes, Quality Tools, Fast Learners — reputation currency exists but no shop for spending it
+- **Offline progress notification**: Progress is calculated on load but no UI toast/banner shown to the player
