@@ -14,11 +14,13 @@ export const ResourcesBar = () => {
   const generators = useGameStore((state) => state.generators);
   const multipliers = useGameStore((state) => state.productionMultipliers);
 
+  const reputation = useGameStore((state) => state.resources.reputation);
+
   const production: Record<string, number> = {
-    credits: calculateProduction(generators, 'credits', multipliers),
-    scrap: calculateProduction(generators, 'scrap', multipliers),
-    energy: calculateProduction(generators, 'energy', multipliers),
-    research: calculateProduction(generators, 'research', multipliers),
+    credits: calculateProduction(generators, 'credits', multipliers, reputation),
+    scrap: calculateProduction(generators, 'scrap', multipliers, reputation),
+    energy: calculateProduction(generators, 'energy', multipliers, reputation),
+    research: calculateProduction(generators, 'research', multipliers, reputation),
   };
 
   return (

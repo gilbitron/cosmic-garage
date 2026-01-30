@@ -249,16 +249,24 @@ const deductResources = (resources: Resources, cost: Cost): Resources => {
 };
 
 /**
+ * Reputation bonus: each ★ gives +10% to all production.
+ */
+export const getReputationBonus = (reputation: number): number =>
+  1 + reputation * 0.1;
+
+/**
  * Calculate total production for a single generator, applying both
- * generator-specific and resource-type multipliers.
+ * generator-specific and resource-type multipliers plus reputation bonus.
  */
 export const getGeneratorProduction = (
   generator: Generator,
-  multipliers: Record<string, number>
+  multipliers: Record<string, number>,
+  reputation = 0
 ): { perUnit: number; total: number } => {
   const genMult = multipliers[generator.id] || 1;
   const resMult = multipliers[generator.resourceType] || 1;
-  const perUnit = generator.baseProduction * genMult * resMult;
+  const repMult = getReputationBonus(reputation);
+  const perUnit = generator.baseProduction * genMult * resMult * repMult;
   return { perUnit, total: perUnit * generator.owned };
 };
 
@@ -291,7 +299,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     state.generators.forEach((generator) => {
       if (generator.owned > 0) {
-        const { total } = getGeneratorProduction(generator, state.productionMultipliers);
+        const { total } = getGeneratorProduction(generator, state.productionMultipliers, state.resources.reputation);
         const produced = total * deltaTime;
         newResources[generator.resourceType] += produced;
         if (generator.resourceType === 'credits') creditsProduced += produced;
@@ -480,7 +488,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           if (g.owned > 0) {
             const { total } = getGeneratorProduction(
               g,
-              state.productionMultipliers
+              state.productionMultipliers,
+              state.resources.reputation
             );
             const produced = total * offlineSecs;
             newResources[g.resourceType] += produced;

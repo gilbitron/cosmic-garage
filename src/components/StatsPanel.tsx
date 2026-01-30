@@ -2,13 +2,14 @@ import { useGameStore } from '../store/gameStore';
 import { formatNumber, formatTime, calculateProduction } from '../utils/formatters';
 
 export const StatsPanel = () => {
-  const { generators, productionMultipliers, totalCreditsEarned, timePlayed, prestigeCount } =
+  const { generators, productionMultipliers, totalCreditsEarned, timePlayed, prestigeCount, reputation } =
     useGameStore((state) => ({
       generators: state.generators,
       productionMultipliers: state.productionMultipliers,
       totalCreditsEarned: state.totalCreditsEarned,
       timePlayed: state.timePlayed,
       prestigeCount: state.prestigeCount,
+      reputation: state.resources.reputation,
     }));
 
   const totalGenerators = generators.reduce((sum, g) => sum + g.owned, 0);
@@ -18,10 +19,10 @@ export const StatsPanel = () => {
     { label: 'Total Credits Earned', value: `₡${formatNumber(totalCreditsEarned)}` },
     { label: 'Prestige Count', value: String(prestigeCount) },
     { label: 'Total Generators', value: String(totalGenerators) },
-    { label: 'Credits/s', value: formatNumber(calculateProduction(generators, 'credits', productionMultipliers)) },
-    { label: 'Scrap/s', value: formatNumber(calculateProduction(generators, 'scrap', productionMultipliers)) },
-    { label: 'Energy/s', value: formatNumber(calculateProduction(generators, 'energy', productionMultipliers)) },
-    { label: 'Research/s', value: formatNumber(calculateProduction(generators, 'research', productionMultipliers)) },
+    { label: 'Credits/s', value: formatNumber(calculateProduction(generators, 'credits', productionMultipliers, reputation)) },
+    { label: 'Scrap/s', value: formatNumber(calculateProduction(generators, 'scrap', productionMultipliers, reputation)) },
+    { label: 'Energy/s', value: formatNumber(calculateProduction(generators, 'energy', productionMultipliers, reputation)) },
+    { label: 'Research/s', value: formatNumber(calculateProduction(generators, 'research', productionMultipliers, reputation)) },
   ];
 
   return (
@@ -46,7 +47,8 @@ export const StatsPanel = () => {
             .map((g) => {
               const genMult = productionMultipliers[g.id] || 1;
               const resMult = productionMultipliers[g.resourceType] || 1;
-              const total = g.owned * g.baseProduction * genMult * resMult;
+              const repMult = 1 + reputation * 0.1;
+              const total = g.owned * g.baseProduction * genMult * resMult * repMult;
               return (
                 <div
                   key={g.id}

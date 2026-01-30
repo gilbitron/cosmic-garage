@@ -59,18 +59,20 @@ export function formatTime(seconds: number): string {
 
 /**
  * Total production for a resource type across all generators.
- * Applies both generator-specific and resource-type multipliers.
+ * Applies generator-specific, resource-type, and reputation multipliers.
  */
 export function calculateProduction(
   generators: Generator[],
   resourceType: string,
-  multipliers: Record<string, number>
+  multipliers: Record<string, number>,
+  reputation = 0
 ): number {
+  const repMult = 1 + reputation * 0.1;
   return generators
     .filter((g) => g.resourceType === resourceType && g.owned > 0)
     .reduce((total, g) => {
       const genMult = multipliers[g.id] || 1;
       const resMult = multipliers[g.resourceType] || 1;
-      return total + g.owned * g.baseProduction * genMult * resMult;
+      return total + g.owned * g.baseProduction * genMult * resMult * repMult;
     }, 0);
 }

@@ -1,4 +1,5 @@
 import { useGameStore } from '../store/gameStore';
+import { getReputationBonus } from '../store/gameStore';
 import { formatNumber } from '../utils/formatters';
 
 export const PrestigePanel = () => {
@@ -14,16 +15,29 @@ export const PrestigePanel = () => {
   const prestigeGain = getPrestigeGain();
   const canPrestige = prestigeGain > 0;
 
+  const currentRep = resources.reputation;
+  const currentBonus = getReputationBonus(currentRep);
+  const afterPrestigeBonus = getReputationBonus(currentRep + prestigeGain);
+
+  const pctNow = Math.round((currentBonus - 1) * 100);
+  const pctAfter = Math.round((afterPrestigeBonus - 1) * 100);
+
   return (
     <div className="bg-gray-800 rounded-lg p-4">
       <h2 className="text-xl font-bold mb-4 text-red-400">Prestige</h2>
 
       <div className="bg-gray-700 rounded-lg p-6 text-center">
+        {/* Current reputation & bonus */}
         <div className="mb-4">
-          <div className="text-3xl font-bold text-red-400 mb-2">
-            ★ {formatNumber(resources.reputation)}
+          <div className="text-3xl font-bold text-red-400 mb-1">
+            ★ {formatNumber(currentRep)}
           </div>
           <div className="text-gray-400">Garage Reputation</div>
+          {pctNow > 0 && (
+            <div className="text-sm text-green-400 mt-1">
+              +{pctNow}% all production
+            </div>
+          )}
         </div>
 
         <div className="mb-6 space-y-2">
@@ -37,11 +51,17 @@ export const PrestigePanel = () => {
           </div>
         </div>
 
+        {/* Prestige reward preview */}
         <div className="mb-6 p-4 bg-gray-600 rounded-lg">
           <h3 className="font-semibold mb-3">Available Prestige Reward</h3>
-          <div className="text-2xl font-bold text-green-400 mb-2">
+          <div className="text-2xl font-bold text-green-400 mb-1">
             +{formatNumber(prestigeGain)} ★ Reputation
           </div>
+          {canPrestige && (
+            <div className="text-sm text-green-300 mb-2">
+              Production bonus: {pctNow}% → {pctAfter}%
+            </div>
+          )}
           <p className="text-sm text-gray-400">
             Reset your garage to gain permanent reputation
           </p>
@@ -51,7 +71,7 @@ export const PrestigePanel = () => {
           onClick={() => {
             if (
               window.confirm(
-                `Prestige now? You'll gain ${prestigeGain} reputation but reset all progress.`
+                `Prestige now? You'll gain ${prestigeGain} ★ (${pctNow}% → ${pctAfter}% production) but reset all progress.`
               )
             ) {
               prestige();
@@ -65,7 +85,7 @@ export const PrestigePanel = () => {
           }`}
         >
           {canPrestige
-            ? `PRESTIGE — Gain ${prestigeGain} ★`
+            ? `PRESTIGE — Gain ${prestigeGain} ★ (+${pctAfter - pctNow}%)`
             : 'Earn more credits to prestige'}
         </button>
 
@@ -74,6 +94,7 @@ export const PrestigePanel = () => {
             Unlocks at{' '}
             <span className="text-yellow-400">₡1,000</span> total credits earned
           </p>
+          <p>Each ★ gives +10% to all production</p>
           <p>Formula: floor(√(total_credits ÷ 1000))</p>
         </div>
       </div>

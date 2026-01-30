@@ -8,6 +8,7 @@ import { ManualRepair } from './ManualRepair';
 interface GeneratorCardProps {
   generator: Generator;
   multipliers: Record<string, number>;
+  reputation: number;
   canAfford: boolean;
   onPurchase: () => void;
 }
@@ -15,10 +16,11 @@ interface GeneratorCardProps {
 const GeneratorCard = ({
   generator,
   multipliers,
+  reputation,
   canAfford,
   onPurchase,
 }: GeneratorCardProps) => {
-  const { perUnit, total } = getGeneratorProduction(generator, multipliers);
+  const { perUnit, total } = getGeneratorProduction(generator, multipliers, reputation);
 
   return (
     <div className="bg-gray-700 rounded-lg p-4 hover:bg-gray-650 transition-colors">
@@ -73,13 +75,14 @@ const TIER_LABELS: Record<number, { title: string; color: string }> = {
 // ── Panel ──────────────────────────────────────────────────────────────
 
 export const GeneratorsPanel = () => {
-  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers } =
+  const { generators, resources, purchaseGenerator, productionMultipliers, unlockedTiers, reputation } =
     useGameStore((state) => ({
       generators: state.generators,
       resources: state.resources,
       purchaseGenerator: state.purchaseGenerator,
       productionMultipliers: state.productionMultipliers,
       unlockedTiers: state.unlockedTiers,
+      reputation: state.resources.reputation,
     }));
 
   const canAffordCost = (cost: Cost): boolean =>
@@ -112,6 +115,7 @@ export const GeneratorsPanel = () => {
                     key={generator.id}
                     generator={generator}
                     multipliers={productionMultipliers}
+                    reputation={reputation}
                     canAfford={canAffordCost(generator.cost)}
                     onPurchase={() => purchaseGenerator(generator.id)}
                   />
