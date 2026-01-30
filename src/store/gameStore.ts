@@ -427,10 +427,31 @@ export const useGameStore = create<GameStore>((set, get) => ({
         return false;
       }
 
-      // Migrate old saves that lack unlockedTiers
+      // ── Migrate generators ───────────────────────────────────────
+      // Merge saved generators with initial definitions so new fields
+      // (like `tier`) and new generators (tier 3) are always present.
+      const savedGenMap = new Map<string, Generator>(
+        state.generators.map((g: Generator) => [g.id, g])
+      );
+      state.generators = initialGenerators.map((def: Generator) => {
+        const saved = savedGenMap.get(def.id);
+        if (!saved) return { ...def };
+        return { ...def, owned: saved.owned, cost: saved.cost };
+      });
+
+      // ── Migrate upgrades ────────────────────────────────────────
+      const savedUpgMap = new Map<string, Upgrade>(
+        state.upgrades.map((u: Upgrade) => [u.id, u])
+      );
+      state.upgrades = initialUpgrades.map((def: Upgrade) => {
+        const saved = savedUpgMap.get(def.id);
+        if (!saved) return { ...def };
+        return { ...def, owned: saved.owned };
+      });
+
+      // ── Migrate unlockedTiers ───────────────────────────────────
       if (!state.unlockedTiers) {
         state.unlockedTiers = [1];
-        // Re-derive unlocked tiers from owned upgrades
         state.upgrades.forEach((u: Upgrade) => {
           if (u.owned && u.effect.type === 'unlock') {
             if (u.effect.target === 'tier2' && !state.unlockedTiers.includes(2))
@@ -440,6 +461,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
           }
         });
       }
+
+      // ── Migrate new scalar fields ──────────────────────────────
+      if (state.totalClicks === undefined) state.totalClicks = 0;
+      if (state.clickValue === undefined) state.clickValue = 1;
 
       // ── Offline Progress ──────────────────────────────────────────
       const offlineSecs = Math.min(
