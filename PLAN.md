@@ -104,13 +104,13 @@ cosmic-garage/
 - [x] Add upgrade system with 10-15 upgrades
 - [x] Balance costs and production rates
 - [x] Implement upgrade purchase logic
-- [ ] Add visual feedback for purchases
+- [x] Add visual feedback for purchases
 - [x] Show production breakdowns per generator
-- [ ] Add notification system for milestones
+- [x] Add notification system for milestones
 
 ### Phase 3: Prestige & Polish
 - [x] Implement prestige system with reputation currency
-- [ ] Add permanent upgrades (5-6 options)
+- [x] Add permanent upgrades (5-6 options)
 - [x] Create PrestigePanel component
 - [x] Add prestige unlock requirements
 - [x] Balance prestige formula
@@ -122,9 +122,9 @@ cosmic-garage/
 - [x] Add touch-friendly buttons
 - [ ] Implement swipe/tap interactions
 - [ ] Test on actual mobile devices
-- [ ] Add loading states and transitions
-- [ ] Polish UI animations
-- [ ] Add tooltips/help text
+- [x] Add loading states and transitions
+- [x] Polish UI animations
+- [x] Add tooltips/help text
 
 ### Phase 5: Content Expansion (Future)
 - [ ] Add 4th tier of generators
@@ -168,7 +168,7 @@ cosmic-garage/
 - [ ] Numbers format correctly at large values
 - [ ] Game is balanced and fun!
 
-## Not Yet Implemented
-- **Dynamic synergy upgrades**: Scientific Method (1% per Scientist) and Self-Improvement (1% per upgrade) — require dynamic multiplier calculation in game loop
-- **Permanent prestige upgrades**: Famous Garage, Efficient Processes, Quality Tools, Fast Learners — reputation currency exists but no shop for spending it
-- **Offline progress notification**: Progress is calculated on load but no UI toast/banner shown to the player
+## Remaining Work
+- Swipe/tap interactions for mobile
+- Test on actual mobile devices
+- Phase 5 content expansion items
