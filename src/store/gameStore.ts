@@ -13,30 +13,30 @@ const initialGenerators: Generator[] = [
   { id: 'solar-panel', name: 'Solar Panel', description: 'Harvests starlight for energy', tier: 1, resourceType: 'energy', baseProduction: 0.4, owned: 0, cost: { credits: 20 } },
   { id: 'intern', name: 'Intern', description: 'Eager alien intern doing research', tier: 1, resourceType: 'research', baseProduction: 0.2, owned: 0, cost: { credits: 25 } },
   // Tier 2
-  { id: 'senior-mechanic', name: 'Senior Mechanic', description: 'Expert interstellar vehicle repair', tier: 2, resourceType: 'credits', baseProduction: 2.5, owned: 0, cost: { scrap: 50, energy: 30 } },
-  { id: 'hydraulic-crusher', name: 'Hydraulic Crusher', description: 'Industrial-grade scrap processing', tier: 2, resourceType: 'scrap', baseProduction: 1.8, owned: 0, cost: { scrap: 75, energy: 40 } },
-  { id: 'fusion-reactor', name: 'Fusion Reactor', description: 'Compact star-powered generator', tier: 2, resourceType: 'energy', baseProduction: 2.2, owned: 0, cost: { credits: 100, scrap: 50 } },
-  { id: 'scientist', name: 'Scientist', description: 'Xeno-tech research specialist', tier: 2, resourceType: 'research', baseProduction: 1.5, owned: 0, cost: { credits: 150, scrap: 60 } },
+  { id: 'senior-mechanic', name: 'Senior Mechanic', description: 'Expert interstellar vehicle repair', tier: 2, resourceType: 'credits', baseProduction: 2.5, owned: 0, cost: { scrap: 75, energy: 50 } },
+  { id: 'hydraulic-crusher', name: 'Hydraulic Crusher', description: 'Industrial-grade scrap processing', tier: 2, resourceType: 'scrap', baseProduction: 1.8, owned: 0, cost: { scrap: 120, energy: 65 } },
+  { id: 'fusion-reactor', name: 'Fusion Reactor', description: 'Compact star-powered generator', tier: 2, resourceType: 'energy', baseProduction: 2.2, owned: 0, cost: { credits: 175, scrap: 85 } },
+  { id: 'scientist', name: 'Scientist', description: 'Xeno-tech research specialist', tier: 2, resourceType: 'research', baseProduction: 1.5, owned: 0, cost: { credits: 250, scrap: 100 } },
   // Tier 3
-  { id: 'repair-bot-swarm', name: 'Repair Bot Swarm', description: 'Autonomous nano-bot repair fleet', tier: 3, resourceType: 'credits', baseProduction: 15, owned: 0, cost: { scrap: 200, energy: 100, research: 50 } },
-  { id: 'matter-recycler', name: 'Matter Recycler', description: 'Molecular disassembly system', tier: 3, resourceType: 'scrap', baseProduction: 10, owned: 0, cost: { scrap: 300, energy: 150, research: 75 } },
-  { id: 'zero-point-cell', name: 'Zero-Point Cell', description: 'Extracts energy from quantum vacuum', tier: 3, resourceType: 'energy', baseProduction: 18, owned: 0, cost: { credits: 400, scrap: 200, energy: 100 } },
-  { id: 'ai-research-lab', name: 'AI Research Lab', description: 'Self-improving research intelligence', tier: 3, resourceType: 'research', baseProduction: 12, owned: 0, cost: { credits: 500, scrap: 250, research: 125 } },
+  { id: 'repair-bot-swarm', name: 'Repair Bot Swarm', description: 'Autonomous nano-bot repair fleet', tier: 3, resourceType: 'credits', baseProduction: 15, owned: 0, cost: { scrap: 500, energy: 250, research: 125 } },
+  { id: 'matter-recycler', name: 'Matter Recycler', description: 'Molecular disassembly system', tier: 3, resourceType: 'scrap', baseProduction: 10, owned: 0, cost: { scrap: 750, energy: 375, research: 175 } },
+  { id: 'zero-point-cell', name: 'Zero-Point Cell', description: 'Extracts energy from quantum vacuum', tier: 3, resourceType: 'energy', baseProduction: 18, owned: 0, cost: { credits: 1000, scrap: 500, energy: 250 } },
+  { id: 'ai-research-lab', name: 'AI Research Lab', description: 'Self-improving research intelligence', tier: 3, resourceType: 'research', baseProduction: 12, owned: 0, cost: { credits: 1250, scrap: 625, research: 300 } },
 ];
 
 // ── Upgrade Definitions ────────────────────────────────────────────────
 
 const initialUpgrades: Upgrade[] = [
-  { id: 'better-tools', name: 'Better Tools', description: '+25% credit production', owned: false, cost: { credits: 100 }, effect: { type: 'multiplier', target: 'credits', multiplier: 1.25 } },
-  { id: 'compressed-storage', name: 'Compressed Storage', description: '+50% scrap production', owned: false, cost: { scrap: 150 }, effect: { type: 'multiplier', target: 'scrap', multiplier: 1.5 } },
-  { id: 'efficient-cells', name: 'Efficient Cells', description: '+30% energy production', owned: false, cost: { energy: 200 }, effect: { type: 'multiplier', target: 'energy', multiplier: 1.3 } },
-  { id: 'research-grants', name: 'Research Grants', description: '+40% research production', owned: false, cost: { credits: 300 }, effect: { type: 'multiplier', target: 'research', multiplier: 1.4 } },
-  { id: 'powered-crushers', name: 'Powered Crushers', description: 'Energy-boosted crushers produce 2× scrap', owned: false, cost: { energy: 150 }, effect: { type: 'synergy', target: 'scrap', multiplier: 2 } },
-  { id: 'automated-repairs', name: 'Automated Repairs', description: 'Scrap-fed auto-tools produce 3× credits', owned: false, cost: { scrap: 200 }, effect: { type: 'synergy', target: 'credits', multiplier: 3 } },
-  { id: 'scientific-method', name: 'Scientific Method', description: 'Research +1% per Scientist owned', owned: false, cost: { research: 100, credits: 200 }, effect: { type: 'dynamic', dynamicId: 'scientific-method' } },
-  { id: 'self-improvement', name: 'Self-Improvement', description: 'All production +1% per upgrade purchased', owned: false, cost: { credits: 400, scrap: 200, energy: 100 }, effect: { type: 'dynamic', dynamicId: 'self-improvement' } },
-  { id: 'expanded-garage', name: 'Expanded Garage', description: 'Unlock Tier 2 generators', owned: false, cost: { credits: 500, scrap: 200 }, effect: { type: 'unlock', target: 'tier2' } },
-  { id: 'orbital-platform', name: 'Orbital Platform', description: 'Unlock Tier 3 generators', owned: false, cost: { credits: 2000, scrap: 1000, energy: 500, research: 200 }, effect: { type: 'unlock', target: 'tier3' } },
+  { id: 'better-tools', name: 'Better Tools', description: '+25% credit production', owned: false, cost: { credits: 200 }, effect: { type: 'multiplier', target: 'credits', multiplier: 1.25 } },
+  { id: 'compressed-storage', name: 'Compressed Storage', description: '+50% scrap production', owned: false, cost: { scrap: 300 }, effect: { type: 'multiplier', target: 'scrap', multiplier: 1.5 } },
+  { id: 'efficient-cells', name: 'Efficient Cells', description: '+30% energy production', owned: false, cost: { energy: 400 }, effect: { type: 'multiplier', target: 'energy', multiplier: 1.3 } },
+  { id: 'research-grants', name: 'Research Grants', description: '+40% research production', owned: false, cost: { credits: 500 }, effect: { type: 'multiplier', target: 'research', multiplier: 1.4 } },
+  { id: 'powered-crushers', name: 'Powered Crushers', description: 'Energy-boosted crushers produce 2× scrap', owned: false, cost: { energy: 300 }, effect: { type: 'synergy', target: 'scrap', multiplier: 2 } },
+  { id: 'automated-repairs', name: 'Automated Repairs', description: 'Scrap-fed auto-tools produce 3× credits', owned: false, cost: { scrap: 400 }, effect: { type: 'synergy', target: 'credits', multiplier: 3 } },
+  { id: 'scientific-method', name: 'Scientific Method', description: 'Research +1% per Scientist owned', owned: false, cost: { research: 200, credits: 400 }, effect: { type: 'dynamic', dynamicId: 'scientific-method' } },
+  { id: 'self-improvement', name: 'Self-Improvement', description: 'All production +1% per upgrade purchased', owned: false, cost: { credits: 800, scrap: 400, energy: 200 }, effect: { type: 'dynamic', dynamicId: 'self-improvement' } },
+  { id: 'expanded-garage', name: 'Expanded Garage', description: 'Unlock Tier 2 generators', owned: false, cost: { credits: 800, scrap: 350 }, effect: { type: 'unlock', target: 'tier2' } },
+  { id: 'orbital-platform', name: 'Orbital Platform', description: 'Unlock Tier 3 generators', owned: false, cost: { credits: 5000, scrap: 2500, energy: 1200, research: 500 }, effect: { type: 'unlock', target: 'tier3' } },
 ];
 
 // ── Prestige Upgrade Definitions ───────────────────────────────────────
@@ -69,6 +69,9 @@ const initialState: GameState = {
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────
+
+/** Cost scaling factor per generator tier — higher tiers escalate faster. */
+const TIER_COST_SCALE: Record<number, number> = { 1: 1.18, 2: 1.25, 3: 1.35 };
 
 const canAfford = (resources: Resources, cost: Cost): boolean =>
   (Object.entries(cost) as [ResourceKey, number | undefined][]).every(
@@ -224,11 +227,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!canAfford(state.resources, effectiveCost)) return false;
 
     const newResources = deductResources(state.resources, effectiveCost);
+    const costScale = TIER_COST_SCALE[generator.tier] ?? 1.18;
     const newGenerators = state.generators.map((g) => {
       if (g.id !== generatorId) return g;
       const newCost = { ...g.cost };
       (Object.keys(newCost) as (keyof Cost)[]).forEach((key) => {
-        if (newCost[key] !== undefined) newCost[key] = Math.ceil(newCost[key]! * 1.15);
+        if (newCost[key] !== undefined) newCost[key] = Math.ceil(newCost[key]! * costScale);
       });
       return { ...g, owned: g.owned + 1, cost: newCost };
     });

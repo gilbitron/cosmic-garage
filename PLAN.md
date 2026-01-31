@@ -135,11 +135,11 @@ cosmic-garage/
 - [ ] Export/import save game
 
 ## Balance Guidelines
-- **Cost Scaling**: Each generator costs ~15% more than previous of same type
-- **ROI**: Most generators should pay for themselves in 1-2 minutes initially
-- **Progression**: Player should reach first prestige in 30-60 minutes of active play
+- **Cost Scaling**: Exponential per tier — T1: 1.18×, T2: 1.25×, T3: 1.35× per purchase
+- **ROI**: Early generators pay for themselves in ~1-2 min; later ones take longer as costs ramp
+- **Progression**: Player should reach first prestige in 45-90 minutes of active play
 - **Multipliers**: Synergy upgrades should feel impactful (2x-3x) but not game-breaking
-- **Difficulty**: Game should feel idle but reward active management
+- **Difficulty**: Game should feel idle but reward active management; higher tiers create real cost walls
 
 ## Mobile Design Considerations
 - **Layout**: Vertical stack on mobile, 2-column on desktop
