@@ -54,6 +54,20 @@ export interface PrestigeUpgradeDef {
   costScale: number;
 }
 
+// ── Achievements ───────────────────────────────────────────────────────
+
+export type AchievementCategory = 'click' | 'generator' | 'resource' | 'upgrade' | 'prestige' | 'production' | 'time' | 'misc';
+
+export interface AchievementDef {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: AchievementCategory;
+}
+
+// ── Game State ─────────────────────────────────────────────────────────
+
 export interface GameState {
   resources: Resources;
   generators: Generator[];
@@ -61,6 +75,7 @@ export interface GameState {
   unlockedTiers: number[];
   productionMultipliers: Record<string, number>;
   prestigeUpgradeLevels: Record<string, number>;
+  unlockedAchievements: string[];
   totalCreditsEarned: number;
   totalClicks: number;
   clickValue: number;

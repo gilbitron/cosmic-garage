@@ -3,14 +3,16 @@ import { ResourcesBar, StickyResourcesBar } from './ResourcesBar';
 import { GeneratorsPanel } from './GeneratorsPanel';
 import { UpgradesPanel } from './UpgradesPanel';
 import { PrestigePanel } from './PrestigePanel';
+import { AchievementsPanel } from './AchievementsPanel';
 import { StatsPanel } from './StatsPanel';
 
-type TabKey = 'generators' | 'upgrades' | 'prestige' | 'stats';
+type TabKey = 'generators' | 'upgrades' | 'prestige' | 'achievements' | 'stats';
 
 const TABS: { key: TabKey; label: string; emoji: string }[] = [
   { key: 'generators', label: 'Generators', emoji: '🔧' },
   { key: 'upgrades', label: 'Upgrades', emoji: '⬆️' },
   { key: 'prestige', label: 'Prestige', emoji: '★' },
+  { key: 'achievements', label: 'Achieve', emoji: '🏆' },
   { key: 'stats', label: 'Stats', emoji: '📊' },
 ];
 
@@ -63,6 +65,7 @@ export const GameLayout = () => {
           {activeTab === 'generators' && <GeneratorsPanel />}
           {activeTab === 'upgrades' && <UpgradesPanel />}
           {activeTab === 'prestige' && <PrestigePanel />}
+          {activeTab === 'achievements' && <AchievementsPanel />}
           {activeTab === 'stats' && <StatsPanel />}
         </div>
       </div>

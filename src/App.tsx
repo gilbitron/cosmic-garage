@@ -4,7 +4,7 @@ import { GameLayout } from './components/GameLayout';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ToastProvider, useToast } from './components/Toast';
 import { useGameLoop, useSaveOnUnload } from './hooks/useGameLoop';
-import { useMilestones } from './hooks/useMilestones';
+import { useAchievements } from './hooks/useAchievements';
 import { useGameStore } from './store/gameStore';
 import { formatNumber, formatTime } from './utils/formatters';
 
@@ -13,7 +13,7 @@ function GameInner() {
 
   useGameLoop();
   useSaveOnUnload();
-  useMilestones();
+  useAchievements();
 
   const loadGame = useGameStore((s) => s.loadGame);
   const { showToast } = useToast();

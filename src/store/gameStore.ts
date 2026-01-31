@@ -22,6 +22,11 @@ const initialGenerators: Generator[] = [
   { id: 'matter-recycler', name: 'Matter Recycler', description: 'Molecular disassembly system', tier: 3, resourceType: 'scrap', baseProduction: 10, owned: 0, cost: { scrap: 750, energy: 375, research: 175 } },
   { id: 'zero-point-cell', name: 'Zero-Point Cell', description: 'Extracts energy from quantum vacuum', tier: 3, resourceType: 'energy', baseProduction: 18, owned: 0, cost: { credits: 1000, scrap: 500, energy: 250 } },
   { id: 'ai-research-lab', name: 'AI Research Lab', description: 'Self-improving research intelligence', tier: 3, resourceType: 'research', baseProduction: 12, owned: 0, cost: { credits: 1250, scrap: 625, research: 300 } },
+  // Tier 4
+  { id: 'dyson-sphere-hub', name: 'Dyson Sphere Hub', description: 'Star-encasing mega-structure billing centre', tier: 4, resourceType: 'credits', baseProduction: 80, owned: 0, cost: { scrap: 2500, energy: 1500, research: 800 } },
+  { id: 'quantum-disassembler', name: 'Quantum Disassembler', description: 'Breaks matter into sub-atomic scrap', tier: 4, resourceType: 'scrap', baseProduction: 55, owned: 0, cost: { scrap: 3500, energy: 2000, research: 1000 } },
+  { id: 'dark-energy-tap', name: 'Dark Energy Tap', description: 'Siphons energy from the expanding universe', tier: 4, resourceType: 'energy', baseProduction: 100, owned: 0, cost: { credits: 5000, scrap: 3000, research: 1200 } },
+  { id: 'omniscient-network', name: 'Omniscient Network', description: 'Galaxy-spanning research consciousness', tier: 4, resourceType: 'research', baseProduction: 65, owned: 0, cost: { credits: 6000, scrap: 3500, energy: 2500 } },
 ];
 
 // ── Upgrade Definitions ────────────────────────────────────────────────
@@ -35,8 +40,16 @@ const initialUpgrades: Upgrade[] = [
   { id: 'automated-repairs', name: 'Automated Repairs', description: 'Scrap-fed auto-tools produce 3× credits', owned: false, cost: { scrap: 400 }, effect: { type: 'synergy', target: 'credits', multiplier: 3 } },
   { id: 'scientific-method', name: 'Scientific Method', description: 'Research +1% per Scientist owned', owned: false, cost: { research: 200, credits: 400 }, effect: { type: 'dynamic', dynamicId: 'scientific-method' } },
   { id: 'self-improvement', name: 'Self-Improvement', description: 'All production +1% per upgrade purchased', owned: false, cost: { credits: 800, scrap: 400, energy: 200 }, effect: { type: 'dynamic', dynamicId: 'self-improvement' } },
+  // Cross-resource synergies
+  { id: 'cross-training', name: 'Cross-Training', description: 'Credits +2% per non-credit generator type owned', owned: false, cost: { credits: 1200, scrap: 600 }, effect: { type: 'dynamic', dynamicId: 'cross-training' } },
+  { id: 'scrap-feedback', name: 'Scrap Feedback', description: 'Scrap +1.5% per 10 generators owned', owned: false, cost: { scrap: 1000, energy: 500 }, effect: { type: 'dynamic', dynamicId: 'scrap-feedback' } },
+  { id: 'energy-surplus', name: 'Energy Surplus', description: 'Energy +3% per energy generator type owned', owned: false, cost: { energy: 1200, research: 600 }, effect: { type: 'dynamic', dynamicId: 'energy-surplus' } },
+  { id: 'research-network', name: 'Research Network', description: 'All production +0.5% per research generator owned', owned: false, cost: { research: 1500, credits: 800 }, effect: { type: 'dynamic', dynamicId: 'research-network' } },
+  { id: 'galactic-trade', name: 'Galactic Trade Routes', description: 'Credits production ×2', owned: false, cost: { credits: 3000, scrap: 1500, energy: 750 }, effect: { type: 'synergy', target: 'credits', multiplier: 2 } },
+  // Tier unlocks
   { id: 'expanded-garage', name: 'Expanded Garage', description: 'Unlock Tier 2 generators', owned: false, cost: { credits: 800, scrap: 350 }, effect: { type: 'unlock', target: 'tier2' } },
   { id: 'orbital-platform', name: 'Orbital Platform', description: 'Unlock Tier 3 generators', owned: false, cost: { credits: 5000, scrap: 2500, energy: 1200, research: 500 }, effect: { type: 'unlock', target: 'tier3' } },
+  { id: 'dyson-sphere-array', name: 'Dyson Sphere Array', description: 'Unlock Tier 4 generators', owned: false, cost: { credits: 25000, scrap: 12000, energy: 6000, research: 3000 }, effect: { type: 'unlock', target: 'tier4' } },
 ];
 
 // ── Prestige Upgrade Definitions ───────────────────────────────────────
@@ -60,6 +73,7 @@ const initialState: GameState = {
   unlockedTiers: [1],
   productionMultipliers: {},
   prestigeUpgradeLevels: {},
+  unlockedAchievements: [],
   totalCreditsEarned: 0,
   totalClicks: 0,
   clickValue: 1,
@@ -71,7 +85,7 @@ const initialState: GameState = {
 // ── Helpers ────────────────────────────────────────────────────────────
 
 /** Cost scaling factor per generator tier — higher tiers escalate faster. */
-const TIER_COST_SCALE: Record<number, number> = { 1: 1.18, 2: 1.25, 3: 1.35 };
+const TIER_COST_SCALE: Record<number, number> = { 1: 1.18, 2: 1.25, 3: 1.35, 4: 1.45 };
 
 const canAfford = (resources: Resources, cost: Cost): boolean =>
   (Object.entries(cost) as [ResourceKey, number | undefined][]).every(
@@ -137,6 +151,30 @@ export const getDynamicMult = (
     mult *= 1 + purchasedCount * 0.01;
   }
 
+  // Cross-Training: credits +2% per non-credit generator type with owned > 0
+  if (resourceType === 'credits' && owned('cross-training')) {
+    const nonCreditTypes = generators.filter((g) => g.resourceType !== 'credits' && g.owned > 0).length;
+    mult *= 1 + nonCreditTypes * 0.02;
+  }
+
+  // Scrap Feedback: scrap +1.5% per 10 total generators owned
+  if (resourceType === 'scrap' && owned('scrap-feedback')) {
+    const totalGens = generators.reduce((s, g) => s + g.owned, 0);
+    mult *= 1 + Math.floor(totalGens / 10) * 0.015;
+  }
+
+  // Energy Surplus: energy +3% per energy generator type with owned > 0
+  if (resourceType === 'energy' && owned('energy-surplus')) {
+    const energyTypes = generators.filter((g) => g.resourceType === 'energy' && g.owned > 0).length;
+    mult *= 1 + energyTypes * 0.03;
+  }
+
+  // Research Network: all production +0.5% per research generator owned (total count)
+  if (owned('research-network')) {
+    const researchCount = generators.filter((g) => g.resourceType === 'research').reduce((s, g) => s + g.owned, 0);
+    mult *= 1 + researchCount * 0.005;
+  }
+
   return mult;
 };
 
@@ -167,6 +205,7 @@ interface GameStore extends GameState {
   purchaseUpgrade: (upgradeId: string) => boolean;
   purchasePrestigeUpgrade: (upgradeId: string) => boolean;
   prestige: () => boolean;
+  unlockAchievement: (id: string) => void;
   saveGame: () => void;
   loadGame: () => boolean;
   canPrestige: () => boolean;
@@ -261,7 +300,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newMultipliers[effect.target] = (newMultipliers[effect.target] || 1) * effect.multiplier;
     }
     if (effect.type === 'unlock' && effect.target) {
-      const tierNum = effect.target === 'tier2' ? 2 : effect.target === 'tier3' ? 3 : null;
+      const tierNum = effect.target === 'tier2' ? 2 : effect.target === 'tier3' ? 3 : effect.target === 'tier4' ? 4 : null;
       if (tierNum && !newUnlockedTiers.includes(tierNum)) {
         newUnlockedTiers = [...newUnlockedTiers, tierNum];
       }
@@ -301,9 +340,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
       resources: { ...initialState.resources, reputation: state.resources.reputation + reputationGained },
       prestigeCount: state.prestigeCount + 1,
       prestigeUpgradeLevels: state.prestigeUpgradeLevels, // preserved!
+      unlockedAchievements: state.unlockedAchievements,   // preserved!
       lastTick: Date.now(),
     });
     return true;
+  },
+
+  // ── Achievements ────────────────────────────────────────────────
+  unlockAchievement: (id: string) => {
+    const state = get();
+    if (state.unlockedAchievements.includes(id)) return;
+    set({ unlockedAchievements: [...state.unlockedAchievements, id] });
   },
 
   // ── Save / Load ───────────────────────────────────────────────────
@@ -344,6 +391,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           if (u.owned && u.effect.type === 'unlock') {
             if (u.effect.target === 'tier2' && !state.unlockedTiers.includes(2)) state.unlockedTiers.push(2);
             if (u.effect.target === 'tier3' && !state.unlockedTiers.includes(3)) state.unlockedTiers.push(3);
+            if (u.effect.target === 'tier4' && !state.unlockedTiers.includes(4)) state.unlockedTiers.push(4);
           }
         });
       }
@@ -352,6 +400,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (state.totalClicks === undefined) state.totalClicks = 0;
       if (state.clickValue === undefined) state.clickValue = 1;
       if (!state.prestigeUpgradeLevels) state.prestigeUpgradeLevels = {};
+      if (!state.unlockedAchievements) state.unlockedAchievements = [];
 
       // ── Offline Progress ───────────────────────────────────────
       const offlineSecs = Math.min((Date.now() - (timestamp || state.lastTick)) / 1000, 86400);

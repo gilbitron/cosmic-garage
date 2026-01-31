@@ -86,6 +86,22 @@ export function calculateProduction(
   if (ownsUpgrade('self-improvement')) {
     dynMult *= 1 + upgrades.filter((u) => u.owned).length * 0.01;
   }
+  if (resourceType === 'credits' && ownsUpgrade('cross-training')) {
+    const nonCreditTypes = generators.filter((g) => g.resourceType !== 'credits' && g.owned > 0).length;
+    dynMult *= 1 + nonCreditTypes * 0.02;
+  }
+  if (resourceType === 'scrap' && ownsUpgrade('scrap-feedback')) {
+    const totalGens = generators.reduce((s, g) => s + g.owned, 0);
+    dynMult *= 1 + Math.floor(totalGens / 10) * 0.015;
+  }
+  if (resourceType === 'energy' && ownsUpgrade('energy-surplus')) {
+    const energyTypes = generators.filter((g) => g.resourceType === 'energy' && g.owned > 0).length;
+    dynMult *= 1 + energyTypes * 0.03;
+  }
+  if (ownsUpgrade('research-network')) {
+    const researchCount = generators.filter((g) => g.resourceType === 'research').reduce((s, g) => s + g.owned, 0);
+    dynMult *= 1 + researchCount * 0.005;
+  }
 
   return generators
     .filter((g) => g.resourceType === resourceType && g.owned > 0)

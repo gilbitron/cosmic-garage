@@ -24,10 +24,16 @@ Intergalactic vehicle repair shop idle game. Start fixing lunar rovers, build up
 - **Scientist** (Research) - 1.5 research/sec, costs 150 credits + 60 scrap
 
 ### Tier 3 - Expanding
-- **Repair Bot Swarm** (Credits) - 15 credits/sec, costs 200 scrap + 100 energy + 50 research
-- **Matter Recycler** (Scrap) - 10 scrap/sec, costs 300 scrap + 150 energy + 75 research
-- **Zero-Point Cell** (Energy) - 18 energy/sec, costs 400 credits + 200 scrap + 100 energy
-- **AI Research Lab** (Research) - 12 research/sec, costs 500 credits + 250 scrap + 125 research
+- **Repair Bot Swarm** (Credits) - 15 credits/sec, costs 500 scrap + 250 energy + 125 research
+- **Matter Recycler** (Scrap) - 10 scrap/sec, costs 750 scrap + 375 energy + 175 research
+- **Zero-Point Cell** (Energy) - 18 energy/sec, costs 1000 credits + 500 scrap + 250 energy
+- **AI Research Lab** (Research) - 12 research/sec, costs 1250 credits + 625 scrap + 300 research
+
+### Tier 4 - Cosmic
+- **Dyson Sphere Hub** (Credits) - 80 credits/sec, costs 2500 scrap + 1500 energy + 800 research
+- **Quantum Disassembler** (Scrap) - 55 scrap/sec, costs 3500 scrap + 2000 energy + 1000 research
+- **Dark Energy Tap** (Energy) - 100 energy/sec, costs 5000 credits + 3000 scrap + 1200 research
+- **Omniscient Network** (Research) - 65 research/sec, costs 6000 credits + 3500 scrap + 2500 energy
 
 ## Upgrade System
 
@@ -38,14 +44,20 @@ Intergalactic vehicle repair shop idle game. Start fixing lunar rovers, build up
 - **Research Grants** - +40% research production, costs 300 credits
 
 ### Synergy Upgrades
-- **Powered Crushers** - Crushers use energy to produce 2x scrap, costs 150 energy
-- **Automated Repairs** - Mechanics use scrap to produce 3x credits, costs 200 scrap
-- **Scientific Method** - Research production boosted by 1% per Scientist owned
-- **Self-Improvement** - All production +1% per upgrade purchased
+- **Powered Crushers** - Crushers use energy to produce 2x scrap, costs 300 energy
+- **Automated Repairs** - Scrap-fed auto-tools produce 3x credits, costs 400 scrap
+- **Scientific Method** - Research +1% per Scientist owned, costs 200 research + 400 credits
+- **Self-Improvement** - All production +1% per upgrade purchased, costs 800 credits + 400 scrap + 200 energy
+- **Cross-Training** - Credits +2% per non-credit generator type owned, costs 1200 credits + 600 scrap
+- **Scrap Feedback** - Scrap +1.5% per 10 generators owned, costs 1000 scrap + 500 energy
+- **Energy Surplus** - Energy +3% per energy generator type owned, costs 1200 energy + 600 research
+- **Research Network** - All production +0.5% per research generator owned, costs 1500 research + 800 credits
+- **Galactic Trade Routes** - Credits production ×2, costs 3000 credits + 1500 scrap + 750 energy
 
 ### Unlock Upgrades
-- **Expanded Garage** - Unlock Tier 2 generators, costs 500 credits + 200 scrap
-- **Orbital Platform** - Unlock Tier 3 generators, costs 2000 credits + 1000 scrap + 500 energy + 200 research
+- **Expanded Garage** - Unlock Tier 2, costs 800 credits + 350 scrap
+- **Orbital Platform** - Unlock Tier 3, costs 5000 credits + 2500 scrap + 1200 energy + 500 research
+- **Dyson Sphere Array** - Unlock Tier 4, costs 25000 credits + 12000 scrap + 6000 energy + 3000 research
 
 ## Prestige System
 **Garage Reputation** - Persistent prestige currency earned when you reset the game. Each prestige run gives you reputation based on total credits earned.
@@ -126,10 +138,10 @@ cosmic-garage/
 - [x] Polish UI animations
 - [x] Add tooltips/help text
 
-### Phase 5: Content Expansion (Future)
-- [ ] Add 4th tier of generators
-- [ ] More synergies between resources
-- [ ] Achievements system
+### Phase 5: Content Expansion
+- [x] Add 4th tier of generators (Dyson Sphere tier with 1.45× cost scaling)
+- [x] More synergies between resources (5 new cross-resource upgrades)
+- [x] Achievements system (25 achievements across 8 categories)
 - [ ] Cloud save/sync
 - [ ] Dark mode toggle
 - [ ] Export/import save game

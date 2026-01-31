@@ -89,6 +89,7 @@ const TIER_LABELS: Record<number, { title: string; color: string }> = {
   1: { title: '🔧 Basic Garage', color: 'text-gray-300' },
   2: { title: '🏗️ Expanded Garage', color: 'text-blue-300' },
   3: { title: '🛸 Orbital Platform', color: 'text-purple-300' },
+  4: { title: '☀️ Dyson Sphere Array', color: 'text-amber-300' },
 };
 
 // ── Panel ──────────────────────────────────────────────────────────────
@@ -113,7 +114,7 @@ export const GeneratorsPanel = () => {
     );
   };
 
-  const tiers = [1, 2, 3].filter((t) => unlockedTiers.includes(t));
+  const tiers = [1, 2, 3, 4].filter((t) => unlockedTiers.includes(t));
 
   return (
     <div>
